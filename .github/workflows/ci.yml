@@ -1,0 +1,25 @@
+name: build opensource COBOL 4J
+
+on:
+  push:
+  pull_request:
+    types: [opened, reopened, review_requested, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/setup-java@v4
+        if: inputs.os == 'ubuntu:24.04'
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          make
