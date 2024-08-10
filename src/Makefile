@@ -14,4 +14,7 @@ parser.tab.c: parser.y
 clean:
 	rm atc lex.yy.* parser.tab.*
 
-.PHONY: clean
+test: atc
+	echo aaa bbb | ./atc
+
+.PHONY: clean test

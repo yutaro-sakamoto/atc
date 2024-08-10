@@ -1,8 +1,9 @@
-SUBDIR = src
+SUBDIRS := src
+TARGETS := all test clean
 
-all: $(SUBDIR)
+$(TARGETS): $(SUBDIRS)
 
-$(SUBDIR):
-	$(MAKE) -C $@
+$(SUBDIRS):
+	$(MAKE) -C $@ $(MAKECMDGOALS)
 
-.PHONY: all $(SUBDIR)
+.PHONY: $(TARGETS) $(SUBDIRS)
