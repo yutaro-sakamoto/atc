@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "parser.tab.h"
 
 int yywrap(void) {
     return 1;
@@ -18,17 +19,11 @@ RSQUARE \]
 
 %%
 {ALPHABET}({ALPHABET}|{DIGIT})* {
-    printf("ID: %s\n", yytext);
+    yylval.text = strdup(yytext);
+    return IDENTIFIER;
 }
 
 [ \t]+ ;
 \n num_lines;
 
 %%
-
-int main() {
-    printf("Enter the input string:\n");
-    yylex();
-    printf("end of file\n");
-    return 0;
-}
