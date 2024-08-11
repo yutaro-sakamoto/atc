@@ -1,0 +1,12 @@
+#!/bin/bash
+
+CHECK_RESULT=$(clang-format --dry-run \
+atc.c 2>&1)
+
+if [ -z "$CHECK_RESULT" ]
+then
+	true
+else
+	echo ${CHECK_RESULT}
+	false
+fi

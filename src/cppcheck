@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cppcheck \
+    --error-exitcode=1 \
+    --enable=all \
+    atc.c

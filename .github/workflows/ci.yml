@@ -12,18 +12,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/setup-java@v4
-        if: inputs.os == 'ubuntu:24.04'
-        with:
-          distribution: 'temurin'
-          java-version: '21'
 
       - uses: actions/checkout@v4
+
+      - name: Install static analysis tools
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y clang-format cppcheck
 
       - name: Build
         run: |
           make
       
+      - name: Check formatting
+        working-directory: src
+        run: |
+          ./check-format
+
+      - name: cppcheck
+        working-directory: src
+        run: |
+          ./cppcheck
+
       - name: Test
         run: |
           make test
