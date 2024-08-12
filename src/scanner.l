@@ -18,6 +18,31 @@ LSQUARE \[
 RSQUARE \]
 
 %%
+
+"AT_CHECK" {
+    return AT_CHECK;
+}
+
+"AT_SETUP" {
+    return AT_SETUP;
+}
+
+"AT_DATA" {
+    return AT_DATA;
+}
+
+"AT_CLEANUP" {
+    return AT_CLEANUP;
+}
+
+"AT_INIT" {
+    return AT_INIT;
+}
+
+"m4_include" {
+    return M4_INCLUDE;
+}
+
 {ALPHABET}({ALPHABET}|{DIGIT})* {
     yylval.text = strdup(yytext);
     return IDENTIFIER;

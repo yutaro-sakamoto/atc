@@ -7,21 +7,39 @@ void yyerror(char const *);
 %union {
     char* text;
 }
+%token AT_CHECK AT_SETUP AT_DATA AT_CLEANUP AT_INIT M4_INCLUDE
 %token <text> IDENTIFIER
-%start id_list
+%start word_list
 
 %%
 
-id_list
-:  IDENTIFIER
-{
-    printf("Identifier: %s\n", $1);
-}
-|   id_list IDENTIFIER
-{
-    printf("Identifier: %s\n", $2);
-}
+word_list
+:
+| word_list word
 ;
+
+word
+: AT_CHECK {
+    printf("keyword: AT_CHECK\n");
+}
+| AT_SETUP {
+    printf("keyword: AT_SETUP\n");
+}
+| AT_DATA {
+    printf("keyword: AT_DATA\n");
+}
+| AT_CLEANUP {
+    printf("keyword: AT_CLEANUP\n");
+}
+| AT_INIT {
+    printf("keyword: AT_INIT\n");
+}
+| M4_INCLUDE {
+    printf("keyword: M4_INCLUDE\n");
+}
+| IDENTIFIER {
+    printf("word: %s\n", $1);
+}
 
 %%
 void
