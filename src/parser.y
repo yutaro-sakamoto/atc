@@ -7,38 +7,60 @@ void yyerror(char const *);
 %union {
     char* text;
 }
+
 %token AT_CHECK AT_SETUP AT_DATA AT_CLEANUP AT_INIT M4_INCLUDE
-%token <text> IDENTIFIER
-%start word_list
+%token LPAREN RPAREN
+%start statement_list
 
 %%
 
-word_list
+statement_list
 :
-| word_list word
+| statement_list statement
 ;
 
-word
-: AT_CHECK {
-    printf("keyword: AT_CHECK\n");
+statement
+: at_check_statement
+| at_setup_statement
+| at_data_statement
+| at_cleanup_statement
+| at_init_statement
+| m4_include_statement
+
+at_check_statement
+: AT_CHECK '(' ')'
+{
+    printf("AT_CHECK statement\n");
 }
-| AT_SETUP {
-    printf("keyword: AT_SETUP\n");
+
+at_setup_statement
+: AT_SETUP '(' ')'
+{
+    printf("AT_SETUP statement\n");
 }
-| AT_DATA {
-    printf("keyword: AT_DATA\n");
+
+at_data_statement
+: AT_DATA '(' ')'
+{
+    printf("AT_DATA statement\n");
 }
-| AT_CLEANUP {
-    printf("keyword: AT_CLEANUP\n");
+
+at_cleanup_statement
+: AT_CLEANUP
+{
+    printf("AT_CLEANUP statement\n");
 }
-| AT_INIT {
-    printf("keyword: AT_INIT\n");
+
+at_init_statement
+: AT_INIT '(' ')'
+{
+    printf("AT_INIT statement\n");
 }
-| M4_INCLUDE {
-    printf("keyword: M4_INCLUDE\n");
-}
-| IDENTIFIER {
-    printf("word: %s\n", $1);
+
+m4_include_statement
+: M4_INCLUDE '(' ')'
+{
+    printf("M4_INCLUDE statement\n");
 }
 
 %%

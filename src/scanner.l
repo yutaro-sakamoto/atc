@@ -12,12 +12,18 @@ int num_lines;
 
 ALPHABET [a-zA-Z_]
 DIGIT [0-9]
-LPAREN \(
-RPAREN \)
 LSQUARE \[
 RSQUARE \]
 
 %%
+
+"(" {
+    return '(';
+}
+
+")" {
+    return ')';
+}
 
 "AT_CHECK" {
     return AT_CHECK;
@@ -41,11 +47,6 @@ RSQUARE \]
 
 "m4_include" {
     return M4_INCLUDE;
-}
-
-{ALPHABET}({ALPHABET}|{DIGIT})* {
-    yylval.text = strdup(yytext);
-    return IDENTIFIER;
 }
 
 [ \t]+ ;
