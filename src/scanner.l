@@ -10,11 +10,6 @@ int yywrap(void) {
 int num_lines;
 %}
 
-ALPHABET [a-zA-Z_]
-DIGIT [0-9]
-LSQUARE \[
-RSQUARE \]
-
 %%
 
 "(" {
@@ -23,6 +18,18 @@ RSQUARE \]
 
 ")" {
     return ')';
+}
+
+"[" {
+    return '[';
+}
+
+"]" {
+    return ']';
+}
+
+"," {
+    return ',';
 }
 
 "AT_CHECK" {
@@ -51,5 +58,10 @@ RSQUARE \]
 
 [ \t]+ ;
 \n num_lines;
+
+[^ \t\n\[\]]+ {
+    yylval.text = strdup(yytext);
+    return TEXT;
+}
 
 %%
