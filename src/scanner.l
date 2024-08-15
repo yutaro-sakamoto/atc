@@ -56,12 +56,15 @@ int num_lines;
     return M4_INCLUDE;
 }
 
-[ \t]+ ;
-\n num_lines;
+[ \r\t]+ ;
+\n ++num_lines;
 
-[^ \t\n\[\]]+ {
-    yylval.text = strdup(yytext);
-    return TEXT;
+\[[^\[\]]*\] {
+    size_t len = strlen(yytext) - 1;
+    yylval.text = malloc(len);
+    memcpy(yylval.text, yytext + 1, len - 1);
+    yytext[len] = '\0';
+    return ARGUMENT;
 }
 
 %%

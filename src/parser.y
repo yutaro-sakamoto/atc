@@ -9,7 +9,7 @@ void yyerror(char const *);
 }
 
 %token AT_CHECK AT_SETUP AT_DATA AT_CLEANUP AT_INIT M4_INCLUDE
-%token <text> TEXT
+%token <text> ARGUMENT
 %start statement_list
 
 %%
@@ -40,7 +40,7 @@ at_setup_statement
 }
 
 at_data_statement
-: AT_DATA '(' argument ',' argument ')'
+: AT_DATA '(' ARGUMENT ',' ARGUMENT ')'
 {
     printf("AT_DATA statement\n");
 }
@@ -52,21 +52,15 @@ at_cleanup_statement
 }
 
 at_init_statement
-: AT_INIT '(' ')'
+: AT_INIT '(' ARGUMENT')'
 {
     printf("AT_INIT statement\n");
 }
 
 m4_include_statement
-: M4_INCLUDE '(' ')'
+: M4_INCLUDE '(' ARGUMENT')'
 {
     printf("M4_INCLUDE statement\n");
-}
-
-argument
-: '[' TEXT ']'
-{
-    printf("Argument: %s\n", $2);
 }
 
 %%
