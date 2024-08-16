@@ -28,13 +28,25 @@ statement
 | m4_include_statement
 
 at_check_statement
-: AT_CHECK '(' ')'
+: AT_CHECK '(' ARGUMENT ')'
 {
-    printf("AT_CHECK statement\n");
+    printf("AT_CHECK statement 1\n");
+}
+| AT_CHECK '(' ARGUMENT ',' ARGUMENT ')'
+{
+    printf("AT_CHECK statement 2\n");
+}
+| AT_CHECK '(' ARGUMENT ',' ARGUMENT ',' ARGUMENT ')'
+{
+    printf("AT_CHECK statement 3\n");
+}
+| AT_CHECK '(' ARGUMENT ',' ARGUMENT ',' ARGUMENT ',' ARGUMENT ')'
+{
+    printf("AT_CHECK statement 4\n");
 }
 
 at_setup_statement
-: AT_SETUP '(' ')'
+: AT_SETUP '(' ARGUMENT ')'
 {
     printf("AT_SETUP statement\n");
 }

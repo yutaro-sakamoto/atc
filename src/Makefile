@@ -2,7 +2,7 @@ CC=gcc
 
 all: atc
 
-atc: atc.c lex.yy.c parser.tab.c
+atc: atc.c atc.h lex.yy.c parser.tab.c
 	$(CC) -o atc lex.yy.c parser.tab.c atc.c
 
 lex.yy.c: scanner.l
