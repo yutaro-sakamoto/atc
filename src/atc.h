@@ -8,6 +8,7 @@ enum atc_type
     ATC_M4_INCLUDE,
 };
 
+#define ATC_TYPE(tree) (tree->common.type)
 struct tree_common
 {
     enum atc_type type;
