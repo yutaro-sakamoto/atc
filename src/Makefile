@@ -2,13 +2,13 @@ CC=gcc
 
 all: atc
 
-atc: atc.c atc.h lex.yy.c parser.tab.c
+atc: atc.c tree.h lex.yy.c parser.tab.c
 	$(CC) -o atc lex.yy.c parser.tab.c atc.c
 
 lex.yy.c: scanner.l
 	flex scanner.l
 
-parser.tab.c: parser.y
+parser.tab.c: parser.y tree.h
 	bison -d parser.y
 
 clean:
