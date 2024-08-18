@@ -20,6 +20,9 @@ void yyerror(char const *);
 statement_list
 :
 | statement_list statement
+{
+    ATC_LIST_APPEND(atc_statement_list, $2);
+}
 ;
 
 statement

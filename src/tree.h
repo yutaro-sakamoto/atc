@@ -84,3 +84,9 @@ struct atc_list
 #define IS_ATC_LIST(tree) (ATC_TYPE(tree) == ATC_LIST)
 #define ATC_LIST_NEXT(tree) (ATC_LIST(tree)->next)
 #define ATC_LIST_VALUE(tree) (ATC_LIST(tree)->value)
+#define ATC_LIST_APPEND(list, value) \
+    list = atc_list_append(ATC_LIST(list), value);
+
+extern struct atc_list* atc_list_append(struct atc_list *list, struct tree_common *value);
+
+extern struct atc_list* atc_statement_list;
