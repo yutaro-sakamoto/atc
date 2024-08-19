@@ -1,0 +1,8 @@
+AT_DATA ([hello], [world])
+AT_SETUP([test])
+AT_CHECK([echo hello])
+AT_CHECK([echo hello], [0], [stdout text])
+AT_CHECK([echo hello], [0], [stdout text], [stderr text])
+AT_INIT([test section])
+AT_CLEANUP
+m4_include([file.at])

@@ -18,6 +18,14 @@ clean:
 	rm atc lex.yy.* parser.tab.*
 
 test: atc
-	echo 'AT_DATA ([hello], [world]) AT_SETUP([test])' | ./atc
+	echo 'AT_DATA ([hello], [world])' \
+	'AT_SETUP([test])' \
+	'AT_CHECK([echo hello])'| \
+	'AT_CHECK([echo hello], [0], [stdout text])'| \
+	'AT_CHECK([echo hello], [0], [stdout text], [stderr text])'| \
+	'AT_INIT([test section])' \
+	'AT_CLEANUP' \
+	'M4_INCLUDE([file.at])' \
+	| ./atc
 
 .PHONY: clean test
