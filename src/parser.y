@@ -43,7 +43,6 @@ at_check_statement
     atc_at_check->expected_stdout = NULL;
     atc_at_check->expected_stderr = NULL;
     $$ = (struct tree_common*)atc_at_check;
-    printf("AT_CHECK statement 1\n");
 }
 | AT_CHECK '(' ARGUMENT ',' ARGUMENT ')'
 {
@@ -54,7 +53,6 @@ at_check_statement
     atc_at_check->expected_stdout = NULL;
     atc_at_check->expected_stderr = NULL;
     $$ = (struct tree_common*)atc_at_check;
-    printf("AT_CHECK statement 2\n");
 }
 | AT_CHECK '(' ARGUMENT ',' ARGUMENT ',' ARGUMENT ')'
 {
@@ -65,7 +63,6 @@ at_check_statement
     atc_at_check->expected_stdout = $7;
     atc_at_check->expected_stderr = NULL;
     $$ = (struct tree_common*)atc_at_check;
-    printf("AT_CHECK statement 3\n");
 }
 | AT_CHECK '(' ARGUMENT ',' ARGUMENT ',' ARGUMENT ',' ARGUMENT ')'
 {
@@ -76,7 +73,6 @@ at_check_statement
     atc_at_check->expected_stdout = $7;
     atc_at_check->expected_stderr = $9;
     $$ = (struct tree_common*)atc_at_check;
-    printf("AT_CHECK statement 4\n");
 }
 
 at_setup_statement
@@ -86,7 +82,6 @@ at_setup_statement
     atc_at_setup->common.type = ATC_AT_SETUP;
     atc_at_setup->testsuite_name = $3;
     $$ = (struct tree_common*)atc_at_setup;
-    printf("AT_SETUP statement\n");
 }
 
 at_data_statement
@@ -97,7 +92,6 @@ at_data_statement
     atc_at_data->file_path = $3;
     atc_at_data->content = $5;
     $$ = (struct tree_common*)atc_at_data;
-    printf("AT_DATA statement\n");
 }
 
 at_cleanup_statement
@@ -106,7 +100,6 @@ at_cleanup_statement
     struct atc_at_cleanup* atc_at_cleanup = malloc(sizeof(struct atc_at_cleanup));
     atc_at_cleanup->common.type = ATC_AT_CLEANUP;
     $$ = (struct tree_common*)atc_at_cleanup;
-    printf("AT_CLEANUP statement\n");
 }
 
 at_init_statement
@@ -116,7 +109,6 @@ at_init_statement
     atc_at_init->common.type = ATC_AT_INIT;
     atc_at_init->test_section_name = $3;
     $$ = (struct tree_common*)atc_at_init;
-    printf("AT_INIT statement\n");
 }
 
 m4_include_statement
@@ -126,7 +118,6 @@ m4_include_statement
     atc_m4_include->common.type = ATC_M4_INCLUDE;
     atc_m4_include->file_name = $3;
     $$ = (struct tree_common*)atc_m4_include;
-    printf("M4_INCLUDE statement\n");
 }
 
 %%
