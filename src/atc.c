@@ -6,9 +6,18 @@
 extern int yyparse(void);
 struct atc_list *atc_statement_list;
 
-int main() {
+int main(int argc, char *argv[]) {
   extern FILE *yyin;
-  yyin = stdin;
+  char filepath[1024];
+
+  sprintf(filepath, "%s.at", argv[1]);
+  yyin = fopen(filepath, "r");
+
+  if (!yyin) {
+    fprintf(stderr, "Cannot open file %s.at\n", argv[1]);
+    exit(EXIT_FAILURE);
+  }
+
   if (yyparse()) {
     fprintf(stderr, "Parse error!\n");
     exit(EXIT_FAILURE);

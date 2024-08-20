@@ -1,2 +1,2 @@
 test:
-	cat test01.txt | ../src/atc
+	../src/atc test01
