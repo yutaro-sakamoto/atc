@@ -19,3 +19,11 @@ struct atc_list* atc_list_reverse(struct atc_list *list) {
     }
     return reversed;
 }
+
+int atc_list_length(struct atc_list *list) {
+    int length = 0;
+    for (struct atc_list *it = list; it; it = it->next) {
+        length++;
+    }
+    return length;
+}

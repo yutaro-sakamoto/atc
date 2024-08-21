@@ -7,7 +7,7 @@ extern int yyparse(void);
 struct atc_list *atc_statement_list;
 
 int verify_base_file(struct atc_list *statement_list) {
-  for(struct atc_list *it = statement_list; it; it = ATC_LIST_NEXT(it)) {
+  for (struct atc_list *it = statement_list; it; it = ATC_LIST_NEXT(it)) {
     if (!IS_ATC_M4_INCLUDE(it->value)) {
       return 0;
     }
@@ -37,5 +37,9 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Base file must contain only m4_include statements\n");
     exit(EXIT_FAILURE);
   }
+
+  int m4_include_count = ATC_LIST_LENGTH(atc_statement_list);
+  printf("Base file contains %d m4_include statements\n", m4_include_count);
+
   return 0;
 }

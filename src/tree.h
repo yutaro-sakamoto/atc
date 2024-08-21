@@ -88,8 +88,11 @@ struct atc_list
     list = atc_list_append(ATC_LIST(list), value);
 #define ATC_LIST_REVERSE(list) \
     list = atc_list_reverse(ATC_LIST(list));
+#define ATC_LIST_LENGTH(list) \
+    atc_list_length(ATC_LIST(list));
 
 extern struct atc_list* atc_list_append(struct atc_list *list, struct tree_common *value);
 extern struct atc_list* atc_list_reverse(struct atc_list *list);
+extern int atc_list_length(struct atc_list *list);
 
 extern struct atc_list* atc_statement_list;
