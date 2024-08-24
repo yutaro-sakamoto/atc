@@ -8,7 +8,7 @@ struct atc_list *atc_statement_list;
 
 int verify_base_file(struct atc_list *statement_list) {
   struct atc_list *it = statement_list;
-  if(!it || !IS_ATC_AT_INIT(it->value)) {
+  if (!it || !IS_ATC_AT_INIT(it->value)) {
     return 0;
   }
   it = ATC_LIST_NEXT(it);
@@ -16,6 +16,17 @@ int verify_base_file(struct atc_list *statement_list) {
     if (!IS_ATC_M4_INCLUDE(it->value)) {
       return 0;
     }
+  }
+  return 1;
+}
+
+int run_test_file(char* test_name, char* file_name) {
+  char filepath[1024];
+  sprintf(filepath, "%s.src/%s", test_name, file_name);
+  FILE *file = fopen(filepath, "r");
+  if(!file) {
+    fprintf(stderr, "Cannot open file %s\n", filepath);
+    return 0;
   }
   return 1;
 }
@@ -43,8 +54,13 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  int m4_include_count = ATC_LIST_LENGTH(atc_statement_list) - 1;
-  printf("Base file contains %d m4_include statements\n", m4_include_count);
+  struct atc_list* m4_include_files = ATC_LIST_NEXT(atc_statement_list);
+  for(struct atc_list* it = m4_include_files; it; it = ATC_LIST_NEXT(it)) {
+    char* test_file_name = ATC_M4_INCLUDE(ATC_LIST_VALUE(it))->file_name;
+    if (!run_test_file(argv[1], test_file_name)) {
+      exit(EXIT_FAILURE);
+    }
+  }
 
   return 0;
 }
