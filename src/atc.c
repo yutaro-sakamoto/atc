@@ -1,9 +1,9 @@
 #include "parser.tab.h"
 #include "tree.h"
+#include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <dirent.h>
 
 extern int yyparse(void);
 struct atc_list *atc_statement_list;
@@ -27,18 +27,17 @@ int create_dir(char *dir) {
   return mkdir(dir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
 }
 
+int remove_dir(char *dir) {
+  // TODO: if necessary, dispatch the following process due to the OS
+  return remove(dir);
+}
+
 int run_test_file(char *test_name, char *file_name) {
   char filepath[1024];
   sprintf(filepath, "%s.src/%s", test_name, file_name);
   FILE *file = fopen(filepath, "r");
   if (!file) {
     fprintf(stderr, "Cannot open file %s\n", filepath);
-    return 0;
-  }
-  char dirpath[1024];
-  sprintf(dirpath, "%s.dir", test_name);
-  if(create_dir(dirpath)) {
-    fprintf(stderr, "Cannot create directory %s\n", dirpath);
     return 0;
   }
   return 1;
@@ -68,6 +67,14 @@ int main(int argc, char *argv[]) {
   }
 
   struct atc_list *m4_include_files = ATC_LIST_NEXT(atc_statement_list);
+
+  char dirpath[1024];
+  sprintf(dirpath, "%s.dir", argv[1]);
+  if (create_dir(dirpath)) {
+    fprintf(stderr, "Cannot create directory %s\n", dirpath);
+    return 0;
+  }
+
   for (struct atc_list *it = m4_include_files; it; it = ATC_LIST_NEXT(it)) {
     char *test_file_name = ATC_M4_INCLUDE(ATC_LIST_VALUE(it))->file_name;
     if (!run_test_file(argv[1], test_file_name)) {
@@ -75,5 +82,9 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  if(remove_dir(dirpath)) {
+    fprintf(stderr, "Cannot remove directory %s\n", dirpath);
+    return 0;
+  }
   return 0;
 }
