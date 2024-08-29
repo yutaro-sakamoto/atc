@@ -40,6 +40,7 @@ int run_test_file(char *test_name, char *file_name) {
     fprintf(stderr, "Cannot open file %s\n", filepath);
     return 0;
   }
+  fclose(file);
   return 1;
 }
 
@@ -80,15 +81,16 @@ int main(int argc, char *argv[]) {
 
   int test_case_count = 0;
   for (struct atc_list *it = m4_include_files; it; it = ATC_LIST_NEXT(it)) {
-    char filepath[1024];
-    sprintf(filepath, "%s.src/%s", argv[1], ATC_M4_INCLUDE(ATC_LIST_VALUE(it))->file_name);
-    yyin = fopen(filepath, "r");
+    char test_file_path[1024];
+    sprintf(test_file_path, "%s.src/%s", argv[1],
+            ATC_M4_INCLUDE(ATC_LIST_VALUE(it))->file_name);
+    yyin = fopen(test_file_path, "r");
     if (!yyin) {
-      fprintf(stderr, "Cannot open file %s\n", filepath);
+      fprintf(stderr, "Cannot open file %s\n", test_file_path);
       return 0;
     }
     if (yyparse()) {
-      fprintf(stderr, "Parse error!: %s\n", filepath);
+      fprintf(stderr, "Parse error!: %s\n", test_file_path);
       exit(EXIT_FAILURE);
     }
     test_case_count += ATC_LIST_LENGTH(atc_statement_list);
