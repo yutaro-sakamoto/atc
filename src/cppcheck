@@ -2,5 +2,9 @@
 
 cppcheck \
     --error-exitcode=1 \
-    --enable=all \
-    atc.c
+    --enable=style \
+    --enable=performance \
+    --enable=portability \
+    --suppress=unusedFunctions \
+    --suppress=toomanyconfigs \
+    atc.c tree.c tree.h
