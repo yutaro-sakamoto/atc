@@ -29,7 +29,7 @@ int create_dir(char *dir) {
 
 int remove_dir(char *dir) {
   // TODO: if necessary, dispatch the following process due to the OS
-  return remove(dir);
+  return remove(dir) == 0;
 }
 
 int run_test_file(char *test_name, char *file_name) {
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 
   char dirpath[1024];
   sprintf(dirpath, "%s.dir", argv[1]);
-  if (create_dir(dirpath)) {
+  if (!create_dir(dirpath)) {
     fprintf(stderr, "Cannot create directory %s\n", dirpath);
     return 0;
   }
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if (remove_dir(dirpath)) {
+  if (!remove_dir(dirpath)) {
     fprintf(stderr, "Cannot remove directory %s\n", dirpath);
     return 0;
   }
