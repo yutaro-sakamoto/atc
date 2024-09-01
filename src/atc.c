@@ -1,9 +1,8 @@
 #include "parser.tab.h"
 #include "tree.h"
-#include <dirent.h>
+#include "fileio.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 
 extern int yyparse(void);
 struct atc_list *atc_statement_list;
@@ -20,16 +19,6 @@ int verify_base_file(struct atc_list *statement_list) {
     }
   }
   return 1;
-}
-
-int create_dir(char *dir) {
-  // TODO: if necessary, dispatch the following process due to the OS
-  return mkdir(dir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
-}
-
-int remove_dir(char *dir) {
-  // TODO: if necessary, dispatch the following process due to the OS
-  return remove(dir) == 0;
 }
 
 int run_test_file(char *test_name, char *file_name) {

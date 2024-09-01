@@ -4,3 +4,4 @@ scanner
 parser.tab.c
 parser.tab.h
 tree.o
+fileio.o
