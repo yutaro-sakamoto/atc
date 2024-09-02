@@ -1,7 +1,7 @@
 
-#include <sys/stat.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
 int create_dir(char *dir) {
   // TODO: if necessary, dispatch the following process due to the OS

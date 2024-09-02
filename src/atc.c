@@ -1,11 +1,12 @@
+#include "fileio.h"
 #include "parser.tab.h"
 #include "tree.h"
-#include "fileio.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 extern int yyparse(void);
 struct atc_list *atc_statement_list;
+extern FILE *yyin;
 
 int verify_base_file(struct atc_list *statement_list) {
   struct atc_list *it = statement_list;
@@ -24,17 +25,20 @@ int verify_base_file(struct atc_list *statement_list) {
 int run_test_file(char *test_name, char *file_name) {
   char filepath[1024];
   sprintf(filepath, "%s.src/%s", test_name, file_name);
-  FILE *file = fopen(filepath, "r");
-  if (!file) {
+  yyin = fopen(filepath, "r");
+  if (!yyin) {
     fprintf(stderr, "Cannot open file %s\n", filepath);
     return 0;
   }
-  fclose(file);
+  if (yyparse()) {
+    fprintf(stderr, "Parse error!: %s\n", filepath);
+    return 0;
+  }
+  fclose(yyin);
   return 1;
 }
 
 int main(int argc, char *argv[]) {
-  extern FILE *yyin;
   char filepath[1024];
   struct atc_list *base_file_statement_list;
 
