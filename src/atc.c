@@ -22,6 +22,23 @@ int verify_base_file(struct atc_list *statement_list) {
   return 1;
 }
 
+void execute_statement_list(struct atc_list *statement_list) {
+  for (struct atc_list *it = statement_list; it; it = ATC_LIST_NEXT(it)) {
+    struct tree_common *statement = ATC_LIST_VALUE(it);
+    if (IS_ATC_AT_SETUP(statement)) {
+      printf("AT_SETUP\n");
+    } else if (IS_ATC_AT_DATA(statement)) {
+      printf("AT_DATA\n");
+    } else if (IS_ATC_AT_CLEANUP(statement)) {
+      printf("AT_CLEANUP\n");
+    } else if (IS_ATC_AT_INIT(statement)) {
+      printf("AT_INIT\n");
+    } else if (IS_ATC_M4_INCLUDE(statement)) {
+      printf("M4_INCLUDE\n");
+    }
+  }
+}
+
 int run_test_file(char *test_name, char *file_name) {
   char filepath[1024];
   sprintf(filepath, "%s.src/%s", test_name, file_name);
@@ -34,6 +51,7 @@ int run_test_file(char *test_name, char *file_name) {
     fprintf(stderr, "Parse error!: %s\n", filepath);
     return 0;
   }
+  execute_statement_list(atc_statement_list);
   fclose(yyin);
   return 1;
 }
