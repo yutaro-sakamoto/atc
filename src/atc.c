@@ -42,6 +42,7 @@ void execute_statement_list(struct atc_list *statement_list) {
 int run_test_file(char *test_name, char *file_name) {
   char filepath[1024];
   sprintf(filepath, "%s.src/%s", test_name, file_name);
+  atc_statement_list = NULL;
   yyin = fopen(filepath, "r");
   if (!yyin) {
     fprintf(stderr, "Cannot open file %s\n", filepath);
