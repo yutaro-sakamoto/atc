@@ -3,6 +3,7 @@
 #include "tree.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 extern int yyparse(void);
 struct atc_list *atc_statement_list;
@@ -22,13 +23,27 @@ int verify_base_file(struct atc_list *statement_list) {
   return 1;
 }
 
-void execute_statement_list(struct atc_list *statement_list) {
+int execute_at_data(char* test_name, struct atc_at_data *at_data) {
+  char file_path[1024];
+  sprintf(file_path, "%s.dir/%s", test_name, at_data->file_path);
+  FILE *fp = fopen(file_path, "w");
+  if (!fp) {
+    fprintf(stderr, "Cannot open file %s\n", at_data->file_path);
+    return 0;
+  }
+  fwrite(at_data->content, 1, strlen(at_data->content), fp);
+  fclose(fp);
+  remove_dir(file_path);
+  return 1;
+}
+
+void execute_statement_list(char* test_name, struct atc_list *statement_list) {
   for (struct atc_list *it = statement_list; it; it = ATC_LIST_NEXT(it)) {
     struct tree_common *statement = ATC_LIST_VALUE(it);
     if (IS_ATC_AT_SETUP(statement)) {
       printf("AT_SETUP\n");
     } else if (IS_ATC_AT_DATA(statement)) {
-      printf("AT_DATA\n");
+      execute_at_data(test_name, ATC_AT_DATA(statement));
     } else if (IS_ATC_AT_CLEANUP(statement)) {
       printf("AT_CLEANUP\n");
     } else if (IS_ATC_AT_INIT(statement)) {
@@ -52,7 +67,7 @@ int run_test_file(char *test_name, char *file_name) {
     fprintf(stderr, "Parse error!: %s\n", filepath);
     return 0;
   }
-  execute_statement_list(atc_statement_list);
+  execute_statement_list(test_name, atc_statement_list);
   fclose(yyin);
   return 1;
 }
