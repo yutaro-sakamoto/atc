@@ -23,21 +23,11 @@ int verify_base_file(struct atc_list *statement_list) {
   return 1;
 }
 
-int execute_at_data(char* test_name, struct atc_at_data *at_data) {
-  char file_path[1024];
-  sprintf(file_path, "%s.dir/%s", test_name, at_data->file_path);
-  FILE *fp = fopen(file_path, "w");
-  if (!fp) {
-    fprintf(stderr, "Cannot open file %s\n", at_data->file_path);
-    return 0;
-  }
-  fwrite(at_data->content, 1, strlen(at_data->content), fp);
-  fclose(fp);
-  remove_dir(file_path);
+int execute_at_data(char *test_name, struct atc_at_data *at_data) {
   return 1;
 }
 
-void execute_statement_list(char* test_name, struct atc_list *statement_list) {
+void execute_statement_list(char *test_name, struct atc_list *statement_list) {
   for (struct atc_list *it = statement_list; it; it = ATC_LIST_NEXT(it)) {
     struct tree_common *statement = ATC_LIST_VALUE(it);
     if (IS_ATC_AT_SETUP(statement)) {
@@ -54,7 +44,19 @@ void execute_statement_list(char* test_name, struct atc_list *statement_list) {
   }
 }
 
-int run_test_file(char *test_name, char *file_name) {
+int create_test_temp_dir(char *test_name, int test_case_count) {
+  char dirpath[1024];
+  sprintf(dirpath, "%s.dir/%d", test_name, test_case_count);
+  return create_dir(dirpath);
+}
+
+int remove_test_temp_dir(char *test_name, int test_case_count) {
+  char dirpath[1024];
+  sprintf(dirpath, "%s.dir/%d", test_name, test_case_count);
+  return remove_dir(dirpath);
+}
+
+int run_test_file(char *test_name, char *file_name, int test_case_count) {
   char filepath[1024];
   sprintf(filepath, "%s.src/%s", test_name, file_name);
   atc_statement_list = NULL;
@@ -67,7 +69,12 @@ int run_test_file(char *test_name, char *file_name) {
     fprintf(stderr, "Parse error!: %s\n", filepath);
     return 0;
   }
+
+  create_test_temp_dir(test_name, test_case_count);
+
   execute_statement_list(test_name, atc_statement_list);
+
+  remove_test_temp_dir(test_name, test_case_count);
   fclose(yyin);
   return 1;
 }
@@ -106,7 +113,6 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
-  int test_case_count = 0;
   for (struct atc_list *it = m4_include_files; it; it = ATC_LIST_NEXT(it)) {
     char test_file_path[1024];
     sprintf(test_file_path, "%s.src/%s", argv[1],
@@ -120,21 +126,20 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "Parse error!: %s\n", test_file_path);
       exit(EXIT_FAILURE);
     }
-    test_case_count += ATC_LIST_LENGTH(atc_statement_list);
   }
 
-  printf("[dbg] test_case_count: %d\n", test_case_count);
-
+  int test_case_count = 1;
   for (struct atc_list *it = m4_include_files; it; it = ATC_LIST_NEXT(it)) {
     char *test_file_name = ATC_M4_INCLUDE(ATC_LIST_VALUE(it))->file_name;
-    if (!run_test_file(argv[1], test_file_name)) {
+    if (!run_test_file(argv[1], test_file_name, test_case_count)) {
       exit(EXIT_FAILURE);
     }
   }
 
-  if (!remove_dir(dirpath)) {
+  if(!remove_dir(dirpath)) {
     fprintf(stderr, "Cannot remove directory %s\n", dirpath);
     return 0;
   }
+
   return 0;
 }
