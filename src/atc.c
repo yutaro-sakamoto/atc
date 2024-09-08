@@ -23,9 +23,7 @@ int verify_base_file(struct atc_list *statement_list) {
   return 1;
 }
 
-int execute_at_data(char *test_name, struct atc_at_data *at_data) {
-  return 1;
-}
+int execute_at_data(char *test_name, struct atc_at_data *at_data) { return 1; }
 
 void execute_statement_list(char *test_name, struct atc_list *statement_list) {
   for (struct atc_list *it = statement_list; it; it = ATC_LIST_NEXT(it)) {
@@ -136,7 +134,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if(!remove_dir(dirpath)) {
+  if (!remove_dir(dirpath)) {
     fprintf(stderr, "Cannot remove directory %s\n", dirpath);
     return 0;
   }
