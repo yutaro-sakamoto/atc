@@ -42,6 +42,18 @@ void execute_statement_list(char *test_name, struct atc_list *statement_list) {
   }
 }
 
+int create_test_temp_dir_root(char *test_name) {
+  char dirpath[1024];
+  sprintf(dirpath, "%s.dir", test_name);
+  return create_dir(dirpath);
+}
+
+int remove_test_temp_dir_root(char *test_name) {
+  char dirpath[1024];
+  sprintf(dirpath, "%s.dir", test_name);
+  return remove_dir(dirpath);
+}
+
 int create_test_temp_dir(char *test_name, int test_case_count) {
   char dirpath[1024];
   sprintf(dirpath, "%s.dir/%d", test_name, test_case_count);
@@ -69,10 +81,9 @@ int run_test_file(char *test_name, char *file_name, int test_case_count) {
   }
 
   create_test_temp_dir(test_name, test_case_count);
-
   execute_statement_list(test_name, atc_statement_list);
-
   remove_test_temp_dir(test_name, test_case_count);
+
   fclose(yyin);
   return 1;
 }
@@ -129,9 +140,12 @@ int main(int argc, char *argv[]) {
   int test_case_count = 1;
   for (struct atc_list *it = m4_include_files; it; it = ATC_LIST_NEXT(it)) {
     char *test_file_name = ATC_M4_INCLUDE(ATC_LIST_VALUE(it))->file_name;
-    if (!run_test_file(argv[1], test_file_name, test_case_count)) {
+    char* test_name = argv[1];
+    create_test_temp_dir_root(test_name);
+    if (!run_test_file(test_name, test_file_name, test_case_count)) {
       exit(EXIT_FAILURE);
     }
+    remove_test_temp_dir_root(test_name);
   }
 
   if (!remove_dir(dirpath)) {
