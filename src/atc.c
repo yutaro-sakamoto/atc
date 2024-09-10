@@ -23,15 +23,26 @@ int verify_base_file(struct atc_list *statement_list) {
   return 1;
 }
 
-int execute_at_data(char *test_name, struct atc_at_data *at_data) { return 1; }
+int execute_at_data(char *test_name, int test_case_count, struct atc_at_data *at_data) {
+  char filepath[1024];
+  sprintf(filepath, "%s.dir/%d/%s", test_name, test_case_count, at_data->file_path);
+  FILE *fp = fopen(filepath, "w");
+  if (!fp) {
+    fprintf(stderr, "Cannot open file %s\n", filepath);
+    return 1;
+  }
+  fwrite(at_data->content, 1, strlen(at_data->content), fp);
+  fclose(fp);
+  return 0;
+}
 
-void execute_statement_list(char *test_name, struct atc_list *statement_list) {
+void execute_statement_list(char *test_name, int test_case_count, struct atc_list *statement_list) {
   for (struct atc_list *it = statement_list; it; it = ATC_LIST_NEXT(it)) {
     struct tree_common *statement = ATC_LIST_VALUE(it);
     if (IS_ATC_AT_SETUP(statement)) {
       printf("AT_SETUP\n");
     } else if (IS_ATC_AT_DATA(statement)) {
-      execute_at_data(test_name, ATC_AT_DATA(statement));
+      execute_at_data(test_name, test_case_count, ATC_AT_DATA(statement));
     } else if (IS_ATC_AT_CLEANUP(statement)) {
       printf("AT_CLEANUP\n");
     } else if (IS_ATC_AT_INIT(statement)) {
@@ -81,7 +92,7 @@ int run_test_file(char *test_name, char *file_name, int test_case_count) {
   }
 
   create_test_temp_dir(test_name, test_case_count);
-  execute_statement_list(test_name, atc_statement_list);
+  execute_statement_list(test_name, test_case_count, atc_statement_list);
   remove_test_temp_dir(test_name, test_case_count);
 
   fclose(yyin);
@@ -140,7 +151,7 @@ int main(int argc, char *argv[]) {
   int test_case_count = 1;
   for (struct atc_list *it = m4_include_files; it; it = ATC_LIST_NEXT(it)) {
     char *test_file_name = ATC_M4_INCLUDE(ATC_LIST_VALUE(it))->file_name;
-    char* test_name = argv[1];
+    char *test_name = argv[1];
     create_test_temp_dir_root(test_name);
     if (!run_test_file(test_name, test_file_name, test_case_count)) {
       exit(EXIT_FAILURE);
