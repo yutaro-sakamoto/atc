@@ -23,9 +23,11 @@ int verify_base_file(struct atc_list *statement_list) {
   return 1;
 }
 
-int execute_at_data(char *test_name, int test_case_count, struct atc_at_data *at_data) {
+int execute_at_data(char *test_name, int test_case_count,
+                    struct atc_at_data *at_data) {
   char filepath[1024];
-  sprintf(filepath, "%s.dir/%d/%s", test_name, test_case_count, at_data->file_path);
+  sprintf(filepath, "%s.dir/%d/%s", test_name, test_case_count,
+          at_data->file_path);
   FILE *fp = fopen(filepath, "w");
   if (!fp) {
     fprintf(stderr, "Cannot open file %s\n", filepath);
@@ -36,7 +38,17 @@ int execute_at_data(char *test_name, int test_case_count, struct atc_at_data *at
   return 0;
 }
 
-void execute_statement_list(char *test_name, int test_case_count, struct atc_list *statement_list) {
+int execute_at_check(char *test_name, int test_case_count,
+                     struct atc_at_check *at_check) {
+  char command[1024];
+  sprintf(command, "cd %s.dir/%d/ && %s", test_name, test_case_count,
+          at_check->command);
+  system(command);
+  return 0;
+}
+
+void execute_statement_list(char *test_name, int test_case_count,
+                            struct atc_list *statement_list) {
   for (struct atc_list *it = statement_list; it; it = ATC_LIST_NEXT(it)) {
     struct tree_common *statement = ATC_LIST_VALUE(it);
     if (IS_ATC_AT_SETUP(statement)) {
@@ -49,6 +61,8 @@ void execute_statement_list(char *test_name, int test_case_count, struct atc_lis
       printf("AT_INIT\n");
     } else if (IS_ATC_M4_INCLUDE(statement)) {
       printf("M4_INCLUDE\n");
+    } else if(IS_ATC_AT_CHECK(statement)) {
+      execute_at_check(test_name, test_case_count, ATC_AT_CHECK(statement));
     }
   }
 }
