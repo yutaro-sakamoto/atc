@@ -18,6 +18,7 @@ struct atc_at_check {
   struct tree_common common;
   char *command;
   char *expected_exit_code;
+  int expected_exit_code_int;
   char *expected_stdout;
   char *expected_stderr;
 };

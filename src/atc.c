@@ -61,7 +61,7 @@ void execute_statement_list(char *test_name, int test_case_count,
       printf("AT_INIT\n");
     } else if (IS_ATC_M4_INCLUDE(statement)) {
       printf("M4_INCLUDE\n");
-    } else if(IS_ATC_AT_CHECK(statement)) {
+    } else if (IS_ATC_AT_CHECK(statement)) {
       execute_at_check(test_name, test_case_count, ATC_AT_CHECK(statement));
     }
   }
@@ -91,17 +91,49 @@ int remove_test_temp_dir(char *test_name, int test_case_count) {
   return remove_dir(dirpath);
 }
 
+int validate_statement_list(struct atc_list *statement_list) {
+  for (struct atc_list *it = statement_list; it; it = ATC_LIST_NEXT(it)) {
+    struct tree_common *statement = ATC_LIST_VALUE(it);
+    if (IS_ATC_AT_CHECK(statement)) {
+      struct atc_at_check *at_check = ATC_AT_CHECK(statement);
+      if (at_check->command == NULL) {
+        return 0;
+      }
+      if (at_check->expected_exit_code == NULL ||
+          strlen(at_check->expected_exit_code) == 0) {
+        at_check->expected_exit_code_int = 0;
+      } else if (strcmp(at_check->expected_exit_code, "0") == 0) {
+        at_check->expected_exit_code_int = 0;
+      } else {
+        int parsed_int = atoi(at_check->expected_exit_code);
+        if (parsed_int == 0) {
+          return 0;
+        }
+        at_check->expected_exit_code_int = parsed_int;
+      }
+    }
+  }
+  return 1;
+}
+
 int run_test_file(char *test_name, char *file_name, int test_case_count) {
   char filepath[1024];
   sprintf(filepath, "%s.src/%s", test_name, file_name);
   atc_statement_list = NULL;
   yyin = fopen(filepath, "r");
+
   if (!yyin) {
     fprintf(stderr, "Cannot open file %s\n", filepath);
     return 0;
   }
+
   if (yyparse()) {
     fprintf(stderr, "Parse error!: %s\n", filepath);
+    return 0;
+  }
+
+  if (!validate_statement_list(atc_statement_list)) {
+    fprintf(stderr, "Invalid statement list\n");
     return 0;
   }
 
