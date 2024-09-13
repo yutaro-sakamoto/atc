@@ -43,7 +43,10 @@ int execute_at_check(char *test_name, int test_case_count,
   char command[1024];
   sprintf(command, "cd %s.dir/%d/ && %s", test_name, test_case_count,
           at_check->command);
-  system(command);
+  int return_code = system(command);
+  if (return_code != at_check->expected_exit_code_int) {
+    fprintf(stderr, "Command failed: %s\n", command);
+  }
   return 0;
 }
 
