@@ -63,7 +63,7 @@ void execute_statement_list(char *test_name, int test_case_count,
     } else if (IS_ATC_AT_INIT(statement)) {
       printf("AT_INIT\n");
     } else if (IS_ATC_M4_INCLUDE(statement)) {
-      printf("M4_INCLUDE\n");
+      fprintf(stderr, "M4_INCLUDE is not allowed in test files\n");
     } else if (IS_ATC_AT_CHECK(statement)) {
       execute_at_check(test_name, test_case_count, ATC_AT_CHECK(statement));
     }
