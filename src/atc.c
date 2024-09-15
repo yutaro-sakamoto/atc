@@ -52,10 +52,11 @@ int execute_at_check(char *test_name, int test_case_count,
 
 void execute_statement_list(char *test_name, int test_case_count,
                             struct atc_list *statement_list) {
+  char* test_case_name = NULL;
   for (struct atc_list *it = statement_list; it; it = ATC_LIST_NEXT(it)) {
     struct tree_common *statement = ATC_LIST_VALUE(it);
     if (IS_ATC_AT_SETUP(statement)) {
-      printf("AT_SETUP\n");
+      test_case_name = ATC_AT_SETUP(statement)->testsuite_name;
     } else if (IS_ATC_AT_DATA(statement)) {
       execute_at_data(test_name, test_case_count, ATC_AT_DATA(statement));
     } else if (IS_ATC_AT_CLEANUP(statement)) {
