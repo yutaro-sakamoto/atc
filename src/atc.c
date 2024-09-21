@@ -50,9 +50,19 @@ int execute_at_check(char *test_name, int test_case_count,
   return 0;
 }
 
+int execute_at_cleanup(char *test_name, int test_case_count) {
+  char command[1024];
+  sprintf(command, "rm -rf %s.dir/%d/*", test_name, test_case_count);
+  int return_code = system(command);
+  if (return_code != 0) {
+    fprintf(stderr, "Command failed: %s\n", command);
+  }
+  return 0;
+}
+
 void execute_statement_list(char *test_name, int test_case_count,
                             struct atc_list *statement_list) {
-  char* test_case_name = NULL;
+  char *test_case_name = NULL;
   for (struct atc_list *it = statement_list; it; it = ATC_LIST_NEXT(it)) {
     struct tree_common *statement = ATC_LIST_VALUE(it);
     if (IS_ATC_AT_SETUP(statement)) {
@@ -60,7 +70,7 @@ void execute_statement_list(char *test_name, int test_case_count,
     } else if (IS_ATC_AT_DATA(statement)) {
       execute_at_data(test_name, test_case_count, ATC_AT_DATA(statement));
     } else if (IS_ATC_AT_CLEANUP(statement)) {
-      printf("AT_CLEANUP\n");
+      execute_at_cleanup(test_name, test_case_count);
     } else if (IS_ATC_AT_INIT(statement)) {
       printf("AT_INIT\n");
     } else if (IS_ATC_M4_INCLUDE(statement)) {

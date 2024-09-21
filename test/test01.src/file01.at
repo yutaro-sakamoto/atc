@@ -1,2 +1,5 @@
+
 AT_DATA([a.txt], [a])
 AT_CHECK([echo hello])
+
+AT_CLEANUP
