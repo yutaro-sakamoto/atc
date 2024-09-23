@@ -87,3 +87,11 @@ extern struct atc_list *atc_list_reverse(struct atc_list *list);
 extern int atc_list_length(struct atc_list *list);
 
 extern struct atc_list *atc_statement_list;
+
+struct string_list {
+  char *value;
+  struct string_list *next;
+};
+
+extern struct string_list *append_string_list(struct string_list *list,
+                                               char *value);
