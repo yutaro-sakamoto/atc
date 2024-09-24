@@ -2,11 +2,14 @@ CC=gcc
 
 all: atc
 
-atc: atc.c tree.o lex.yy.c parser.tab.c fileio.o
-	$(CC) -o atc tree.o lex.yy.c parser.tab.c atc.c fileio.o
+atc: atc.c tree.o lex.yy.c parser.tab.c fileio.o basefile_processor.o
+	$(CC) -o atc tree.o lex.yy.c parser.tab.c atc.c fileio.o basefile_processor.o
 
 fileio.o: fileio.c fileio.h
 	$(CC) -c fileio.c
+
+basefile_processor.o: basefile_processor.c basefile_processor.h
+	$(CC) -c basefile_processor.c
 
 lex.yy.c: scanner.l
 	flex scanner.l

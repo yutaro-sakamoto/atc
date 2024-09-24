@@ -1,3 +1,4 @@
+#include "basefile_processor.h"
 #include "fileio.h"
 #include "parser.tab.h"
 #include "tree.h"
@@ -8,20 +9,6 @@
 extern int yyparse(void);
 struct atc_list *atc_statement_list;
 extern FILE *yyin;
-
-int verify_base_file(struct atc_list *statement_list) {
-  struct atc_list *it = statement_list;
-  if (!it || !IS_ATC_AT_INIT(it->value)) {
-    return 0;
-  }
-  it = ATC_LIST_NEXT(it);
-  for (; it; it = ATC_LIST_NEXT(it)) {
-    if (!IS_ATC_M4_INCLUDE(it->value)) {
-      return 0;
-    }
-  }
-  return 1;
-}
 
 int execute_at_data(char *test_name, int test_case_count,
                     struct atc_at_data *at_data) {
@@ -160,31 +147,14 @@ int run_test_file(char *test_name, char *file_name, int test_case_count) {
 }
 
 int main(int argc, char *argv[]) {
-  char filepath[1024];
-  struct atc_list *base_file_statement_list;
+  struct basefile_processor_result basefile_result = process_basefile(argv[1]);
+  show_basefile_processor_messages(&basefile_result, stderr, stderr);
 
-  sprintf(filepath, "%s.at", argv[1]);
-  yyin = fopen(filepath, "r");
-
-  if (!yyin) {
-    fprintf(stderr, "Cannot open file %s.at\n", argv[1]);
-    exit(EXIT_FAILURE);
+  if (!basefile_result.is_success) {
+    return 1;
   }
 
-  if (yyparse()) {
-    fprintf(stderr, "Parse error!\n");
-    exit(EXIT_FAILURE);
-  }
-  base_file_statement_list = atc_statement_list;
-
-  ATC_LIST_REVERSE(base_file_statement_list);
-
-  if (!verify_base_file(base_file_statement_list)) {
-    fprintf(stderr, "Base file must contain only m4_include statements\n");
-    exit(EXIT_FAILURE);
-  }
-
-  struct atc_list *m4_include_files = ATC_LIST_NEXT(base_file_statement_list);
+  struct atc_list *m4_include_files = basefile_result.base_file_statement_list;
 
   char dirpath[1024];
   sprintf(dirpath, "%s.dir", argv[1]);
