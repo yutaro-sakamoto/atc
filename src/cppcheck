@@ -7,4 +7,4 @@ cppcheck \
     --enable=portability \
     --suppress=unusedFunctions \
     --suppress=toomanyconfigs \
-    atc.c tree.c tree.h fileio.c fileio.h
+    atc.c {tree,fileio,basefile_processor}.{c,h}

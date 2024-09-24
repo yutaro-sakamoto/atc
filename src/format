@@ -1,4 +1,4 @@
 #!/bin/bash
 
 clang-format -i \
-atc.c tree.c tree.h fileio.c fileio.h
+atc.c {tree,fileio,basefile_processor}.{c,h}
